@@ -4,7 +4,7 @@ const Genre = require("../models/Genre")
 const Actor = require("../models/Actor")
 const Director = require("../models/Director")
 require("../models")
-
+const URL_MOVIES='/api/v1/movies'
 let genre
 let actor
 let director
@@ -40,7 +40,6 @@ beforeAll(async()=>{
         directorId:director.id
     }
 })
-const URL_MOVIES='/api/v1/movies'
 
 test("POST -> 'URL_MOVIES',should return status code 201 and res.body.name === movies.name",async()=>{
     const res=await(app)
@@ -50,60 +49,57 @@ test("POST -> 'URL_MOVIES',should return status code 201 and res.body.name === m
     expect(res.status).toBe(201)
     expect(res.body).toBeDefined()
     expect(res.body.name).toBe(movie.name)
+})
+
+test("GET -> 'URL_MOVIES',should return status code 200 and res.body.toHaveLength === 1",async()=>{
+    const res=await(app)
+        .get(URL_MOVIES)
+    expect(res.status).toBe(200)
+    expect(res.body).toBeDefined()
+    expect(res.body).toHaveLength(1)
+})
+
+
+test("GET ONE->'URL_MOVIES/:id', should return status code 200 and res.body.name === movie.name",async()=>{
+    const res=await request(app)
+        .get(`${URL_MOVIES}/${movieId}`)
+    //!cantidad de filtros a pasar     
+    expect(res.status).toBe(200)
+    expect(res.body).toBeDefined()
+    expect(res.body.name).toBe(movie.name)
+})
+test("PUT->'URL_MOVIES/:id', should return status code 200 and res.body.name === movieUpdate.name",async()=>{
+    const movieUpdate={
+        name:'BARBIE',
+        image:'https://upload.wikimedia.org/wikipedia/commons/5/50/Barbie_%282023_movie_logo%29.png',
+        synopsis:'se quien tu decidas ser',
+        releaseYear:2023
+    }
+    const res=await request(app)
+        .put(`${URL_MOVIES}/${movieId}`)
+        .send(movieUpdate)
+    //!cantidad de filtros a pasar     
+    expect(res.status).toBe(200)
+    expect(res.body).toBeDefined()
+    expect(res.body.name).toBe(movieUpdate.name)
+})
+//? anadir la relacion de los pivot 
+
+
+
+
+
+
+
+
+
+
+test("DELETE->'URL_MOVIES/:id', should return status code 204",async()=>{
+    const res=await request(app)
+        .delete(`${URL_MOVIES}/${movieId}`)
+    //!cantidad de filtros a pasar     
+    expect(res.status).toBe(204)
     await genre.destroy()
     await actor.destroy()
     await director.destroy()
 })
-
-// test("GET -> 'URL_MOVIES',should return status code 200 and res.body.toHaveLength === 1",async()=>{
-//     const res=await(app)
-//         .get(URL_MOVIES)
-//     expect(res.status).toBe(200)
-//     expect(res.body).toBeDefined()
-//     expect(res.body).toHaveLength(1)
-// })
-
-
-// test("GET ONE->'URL_MOVIES/:id', should return status code 200 and res.body.name === movie.name",async()=>{
-//     const res=await request(app)
-//         .get(`${URL_MOVIES}/${movieId}`)
-//     //!cantidad de filtros a pasar     
-//     expect(res.status).toBe(200)
-//     expect(res.body).toBeDefined()
-//     expect(res.body.name).toBe(movie.name)
-// })
-// test("PUT->'URL_MOVIES/:id', should return status code 200 and res.body.name === movieUpdate.name",async()=>{
-//     const movieUpdate={
-//         name:'BARBIE',
-//         image:'https://upload.wikimedia.org/wikipedia/commons/5/50/Barbie_%282023_movie_logo%29.png',
-//         synopsis:'se quien tu decidas ser',
-//         releaseYear:2023
-//     }
-//     const res=await request(app)
-//         .put(`${URL_MOVIES}/${movieId}`)
-//         .send(movieUpdate)
-//     //!cantidad de filtros a pasar     
-//     expect(res.status).toBe(200)
-//     expect(res.body).toBeDefined()
-//     expect(res.body.name).toBe(movieUpdate.name)
-// })
-
-
-
-
-
-
-
-
-
-
-
-// test("DELETE->'URL_MOVIES/:id', should return status code 204",async()=>{
-//     const res=await request(app)
-//         .delete(`${URL_MOVIES}/${movieId}`)
-//     //!cantidad de filtros a pasar     
-//     expect(res.status).toBe(204)
-//     await genre.destroy()
-//     await actor.destroy()
-//     await director.destroy()
-// })
