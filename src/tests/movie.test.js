@@ -107,10 +107,47 @@ test("POST -> 'URL_MOVIES/:id/genres',should return status code 200 and res.body
     console.log(res.body);    
     expect(res.status).toBe(200)
     expect(res.body).toBeDefined()
-    expect(res.body).toHaveLength(1)
+    expect(res.body[0].id).toBe(createGenre.id)
+
     await createGenre.destroy()
 })
+test("POST -> 'URL_MOVIES/:id/actors',should return status code 200 and res.body === toHaveLength(1)",async()=>{
+    const actor={
+        firstName:'Bratt',
+        lastName:'Pitt',
+        nationality:'USA',
+        image:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Brad_Pitt_2019_by_Glenn_Francis.jpg/640px-Brad_Pitt_2019_by_Glenn_Francis.jpg',
+        birthday: 1978
+    }
+    const createActor=await Actor.create(actor)
+    const res=await request(app)
+        .post(`${URL_MOVIES}/${movieId}/actors`)
+        .send([createActor.id])
+    console.log(res.body);    
+    expect(res.status).toBe(200)
+    expect(res.body).toBeDefined()
+    expect(res.body[0].id).toBe(createActor.id)
+    await createActor.destroy()
+})
 
+test("POST -> 'URL_MOVIES/:id/directors',should return status code 200 and res.body === toHaveLength(1)",async()=>{
+    const director={
+        firstName:'steven ',
+        lastName:'spielberg',
+        nationality:'USA',
+        image:'https://cdn.hobbyconsolas.com/sites/navi.axelspringer.es/public/media/image/2023/03/steven-spielberg-2975390.jpg',
+        birthday: 1964
+    }
+    const createDirector=await Director.create(director)
+    const res=await request(app)
+        .post(`${URL_MOVIES}/${movieId}/directors`)
+        .send([createDirector.id])
+    console.log(res.body);    
+    expect(res.status).toBe(200)
+    expect(res.body).toBeDefined()
+    expect(res.body[0].id).toBe(createDirector.id)
+    await createDirector.destroy()
+})
 
 
 test("DELETE->'URL_MOVIES/:id', should return status code 204",async()=>{
@@ -118,7 +155,4 @@ test("DELETE->'URL_MOVIES/:id', should return status code 204",async()=>{
         .delete(`${URL_MOVIES}/${movieId}`)
     //!cantidad de filtros a pasar     
     expect(res.status).toBe(204)
-    //await genre.destroy()
-    // await actor.destroy()
-    // await director.destroy()
 })
